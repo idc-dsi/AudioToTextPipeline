@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio to Text Pipeline</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <!-- Include FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Audio to Text Pipeline</h1>
+
+        <!-- Description and Button for Azure Login -->
+        <p>Login to gain access to Azure's Indexer AI capabilities.</p>
+        <button class="azure-login-btn" id="loginBtn" onclick="location.href='/login'">Login with Azure</button>
+
+        <!-- Hidden Description and Button for Load Audio (shown only after login) -->
+        <p id="loadAudioDesc" style="display: none;">Choose an audio file to upload it to Azure's Indexer.</p>
+        <button id="loadAudioBtn" style="display: none;"><i class="fas fa-upload"></i> Load Audio</button>
+
+        <!-- Hidden Description and Button for Get Transcript (shown only after login) -->
+        <p id="loadFileListDesc" style="display: none;">Get transcript from a list of files.</p>
+        <button id="loadListBtn" style="display: none;">Get Transcript</button>
+
+        <!-- Description and Button for Load Text with Icon -->
+        <p>Choose a text file to load</p>
+        <button id="loadTextBtn"><i class="fas fa-upload"></i> Load Text</button>
+
+        <!-- Description and Button for Enhance/Transform -->
+        <p>Click the button below to run the program and enhance the uploaded content.</p>
+        <button id="transformBtn">Enhance</button>
+    </div>
+
+    <!-- Existing backend.js -->
+    <script src="static/js/backend.js"></script>
+
+    <!-- Inline script for button visibility based on login status -->
+    <script>
+        // Check if the user is logged in by inspecting the URL or session status.
+        const urlParams = new URLSearchParams(window.location.search);
+        const isLoggedIn = urlParams.has('logged_in');
+    
+        // Show additional buttons and descriptions only if the user is logged in
+        if (isLoggedIn) {
+            document.getElementById('loadAudioDesc').style.display = 'block';
+            document.getElementById('loadAudioBtn').style.display = 'block';
+            document.getElementById('loadFileListDesc').style.display = 'block';
+            document.getElementById('loadListBtn').style.display = 'block';
+    
+            // Attach the event listener now that the button is visible
+            document.getElementById('loadListBtn').addEventListener('click', function () {
+                window.location.href = '/list_files';
+            });
+        }
+    </script>
+    
+</body>
+
+</html>
