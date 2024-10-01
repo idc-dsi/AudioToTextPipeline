@@ -1,8 +1,9 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# Workflow file for building and deploying a Python app to Azure Web App - AudioToTextPipeline
+# Docs: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 # More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
 
-name: Build and deploy Python app to Azure Web App - AudioToTextPipline
+name: Build and deploy Python app to Azure Web App - AudioToTextPipeline
 
 on:
   push:
@@ -15,35 +16,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
 
+      # Set up the Python version for the environment
       - name: Set up Python version
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Create and start virtual environment
-        run: |
-          python -m venv venv
-          source venv/bin/activate
-      
+      # Install dependencies from the requirements.txt file
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-              
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
+      # Zip the contents of the application while excluding unnecessary files
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: |
+          zip -r release.zip . -x ".git/*" -x ".github/*" -x "venv/*" -x "*.pyc" -x "__pycache__/*"
 
+      # Upload the zipped artifact for the deployment job
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            release.zip
-            !venv/
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -52,30 +51,36 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write  # This is required for requesting the JWT
 
     steps:
+      # Download the artifact from the build job
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: python-app
 
+      # Unzip the artifact for deployment
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      
+      # Login to Azure using credentials stored in GitHub Secrets
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_45137F03DD7B47C2A518D5E0A4F7A9B7 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_923E1984E0264D4DACE07823C7ADDF0F }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A9A9C785F21F491F945AACC85B8BCA69 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
-      - name: 'Deploy to Azure Web App'
+      # Deploy to the Azure Web App using the downloaded and unzipped artifact
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'AudioToTextPipline'
           slot-name: 'Production'
         timeout-minutes: 60
-          
+
+      # Optional: Show directory structure for debugging purposes
+      - name: Show directory structure (for debugging)
+        run: ls -R
