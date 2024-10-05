@@ -3,13 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List of Captions</title>
+    <title>Audio to Text Pipeline</title>
     <link rel="stylesheet" href="static/css/style.css">
+    <!-- Include FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Style to center the text and control spacing */
+        .centered-text {
+            text-align: center;
+            margin: 0; /* Remove default margin */
+            padding: 5px 0; /* Optional: Adjust padding to control vertical space */
+            line-height: 1.5; /* Set line height for better spacing control */
+        }
+    </style>
 </head>
 <body>
     <button class="azure-login-btn" onclick="location.href='/login'">Home</button>
     <div class="clear"></div>
+
+    <!-- Group the sentences inside a div with the new class -->
+    <div class="centered-text">
+        <p>Clicking on a link below will process the video using the Azure Indexer and start downloading an enhanced version of the transcript.</p>
+        <p>This process will take an <strong>extremely</strong> long time if not run on a GPU-powered machine.</p>
+    </div>
+    
     <div id="fileList"></div>
+
+    <!-- Spinner for Loading Animation -->
+    <div id="loadingSpinner" style="display: none;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: #3498db;"></i>
+    </div>
 
     <script src="static/js/backend.js"></script>
 </body>

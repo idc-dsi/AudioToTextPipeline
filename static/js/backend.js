@@ -11,6 +11,16 @@ document.addEventListener("DOMContentLoaded", function () {
    // Variable to store the text content obtained from Azure Video Indexer or uploaded by the user
    var uploadedTextContent = "";
 
+   // Functions to show and hide the spinner
+   function showLoadingSpinner() {
+      console.log("Showing spinner");
+      document.getElementById('loadingSpinner').style.display = 'block';
+   }
+
+   function hideLoadingSpinner() {
+      document.getElementById('loadingSpinner').style.display = 'none';
+   }
+
    // Check if the "Load Audio" button is present and set up its event handler
    var loadAudioBtn = document.getElementById('loadAudioBtn');
    if (loadAudioBtn) {
@@ -22,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var uploadedFile = e.target.files[0];
             var formData = new FormData();
             formData.append('file', uploadedFile);
-
+            alert("Upload started! Processing might take a while. Feel free to continue working in the meantime.");
             try {
                var uploadResponse = await fetch('/upload', {
                   method: 'POST',
@@ -116,6 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log('Captions loaded for video ID:', videoId);
 
             // Call transformText with captions, mimicking the functionality of file upload
+            alert("Transformation started. Please wait for the download to begin.")
             transformText(uploadedTextContent);
          })
          .catch(error => {
@@ -126,6 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
    // Handle model loading
    document.getElementById('loadModelBtn').addEventListener('click', async function () {
+      showLoadingSpinner();
       alert("Loading model and tokenizer. Please wait...");
       try {
          // Send a POST request to the server to load the model and tokenizer
@@ -138,6 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
             throw new Error(`HTTP error! Status: ${response.status}`);
          }
 
+         hideLoadingSpinner();
          const data = await response.json();
          alert(data.message); // Inform the user that the model is successfully loaded
       } catch (error) {
@@ -173,6 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
          alert("Transformation started. Please wait for the download to begin.")
          transformText(uploadedTextContent);
+
       }
    });
 
@@ -181,6 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
    // Send the text to the server for translation
    async function transformText(textContent) {
       console.log('Sending POST request with text content:', textContent);
+      showLoadingSpinner();
       try {
          const response = await fetch('/translate', {
             method: 'POST',
@@ -192,6 +207,7 @@ document.addEventListener("DOMContentLoaded", function () {
          }
          const data = await response.json();
          console.log('Received translated text:', data.translated_text);
+         hideLoadingSpinner()
          saveTextAsFile(data.translated_text, "translated_output");
       } catch (error) {
          console.error('Error during text translation:', error);

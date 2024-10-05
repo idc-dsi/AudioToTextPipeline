@@ -142,9 +142,9 @@ def index():
 @app.route('/login')
 def login():
     callback_url = url_for('authorized', _external=True, _scheme='https')
-    #return azure.authorize(callback=callback_url)
+    return azure.authorize(callback=callback_url)
     #Localhost
-    return azure.authorize(url_for('authorized', _external=True))
+    #return azure.authorize(url_for('authorized', _external=True))
 
 @app.route('/login/authorized')
 def authorized():
@@ -169,9 +169,9 @@ def authorized():
 
     # Add the 'logged_in' query parameter to indicate successful login
     callback_url = url_for('index', logged_in=True, _scheme='https')
-    #return redirect(callback_url)
+    return redirect(callback_url)
     #for local host
-    return redirect(url_for('index', logged_in=True))
+    #return redirect(url_for('index', logged_in=True))
 
 
 @app.route('/load_model', methods=['POST'])
