@@ -124,6 +124,29 @@ document.addEventListener("DOMContentLoaded", function () {
          });
    }
 
+   // Handle model loading
+   document.getElementById('loadModelBtn').addEventListener('click', async function () {
+      alert("Loading model and tokenizer. Please wait...");
+      try {
+         // Send a POST request to the server to load the model and tokenizer
+         const response = await fetch('/load_model', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+         });
+
+         if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+         }
+
+         const data = await response.json();
+         alert(data.message); // Inform the user that the model is successfully loaded
+      } catch (error) {
+         console.error('Error loading the model:', error);
+         alert(`Failed to load the model: ${error.message}`);
+      }
+   });
+
+
 
    // Handles text file uploads
    document.getElementById('loadTextBtn').addEventListener('click', function () {

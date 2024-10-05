@@ -6,96 +6,96 @@ html {
     width: 100%;
     height: 100%;
     display: flex;
-    /* Using flexbox for centering and flexible layouts */
     flex-direction: column;
-    /* Align children vertically */
     align-items: center;
-    /* Center children horizontally */
     justify-content: flex-start;
-    /* Align content to the top */
     font-family: 'Segoe UI', Arial, sans-serif;
-    /* Font styling */
     background-color: #f4f4f9;
-    /* Light grey background for easier visibility */
     color: #333;
-    /* Dark text for better readability */
     overflow-y: auto;
-    /* Allow vertical scrolling if content overflows */
 }
 
+/* Main container styling */
 .container {
     width: 90%;
-    /* Responsive width, using most of the viewport width */
-    max-width: 600px;
-    /* Maximum width to maintain readability and usability */
+    max-width: 1000px;
+    /* Increased max width to accommodate side-by-side containers */
     padding: 20px;
-    /* Padding around content inside the container */
     background-color: #ffffff;
-    /* White background for the content area */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow for depth */
     border-radius: 8px;
-    /* Rounded corners for a modern look */
     text-align: center;
-    /* Center text for better aesthetics */
     margin-top: 20px;
-    /* Add space above the container to avoid touching the viewport edge */
-    display: flex;
-    flex-direction: column;
-    /* Stack children vertically */
-    align-items: center;
-    /* Center-align children horizontally */
 }
 
+/* Flexbox layout for button groups */
+.button-group-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* Each button group styling */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 48%;
+    /* Reduced width to fit two containers side-by-side */
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Styling for buttons */
 button {
     background-color: transparent;
-    /* Removes the full blue background */
     color: #0078d4;
-    /* Azure blue text color for high contrast */
     border: 2px solid #0078d4;
-    /* Azure blue border for consistency */
     padding: 8px 16px;
-    /* Reduced padding around text */
-    margin-bottom: 15px;
-    /* Keeps the vertical and horizontal margin */
+    margin: 10px 0;
     font-size: 16px;
-    /* Keeps font size readable */
     cursor: pointer;
-    /* Ensures it's clear the button is clickable */
     border-radius: 4px;
-    /* Maintains rounded corners */
     transition: background-color 0.3s, color 0.3s;
-    /* Smooth transition for hover effects */
 }
 
 button:hover {
     background-color: #0078d4;
-    /* Blue background on hover */
     color: white;
-    /* White text on hover for contrast */
 }
 
-.azure-login-btn {
+button.azure-login-btn {
     font-size: 14px;
-    /* Slightly smaller font for less prominent button */
 }
 
 /* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {
     .container {
         width: 95%;
-        /* Allow more width usage on smaller screens */
+    }
+
+    .button-group-row {
+        flex-direction: column;
+        /* Stack containers vertically on smaller screens */
+        align-items: center;
+    }
+
+    .button-group {
+        width: 90%;
+        /* Full width for each container */
+        margin-bottom: 20px;
+        /* Add spacing between containers */
     }
 }
 
 @media (max-width: 480px) {
     .container {
         width: 100%;
-        /* Full width on very small screens for maximum space utilization */
     }
 
     button {
         padding: 10px 20px;
-        /* Adjust padding slightly for small screens */
     }
 }

@@ -12,27 +12,34 @@
 
 <body>
     <div class="container">
-        <h1>Audio to Text Pipeline</h1>
+        <!-- First Row of Button Groups -->
+        <div class="button-group-row">
+            <!-- First Button Group: User-Specific Actions -->
+            <div class="button-group">
+                <h2>User-Specific Actions</h2>
+                <p>Login to gain access to Azure's Indexer AI capabilities.</p>
+                <button class="azure-login-btn" id="loginBtn" onclick="location.href='/login'">Login with Azure</button>
 
-        <!-- Description and Button for Azure Login -->
-        <p>Login to gain access to Azure's Indexer AI capabilities.</p>
-        <button class="azure-login-btn" id="loginBtn" onclick="location.href='/login'">Login with Azure</button>
+                <p id="loadAudioDesc" style="display: none;">Choose an audio file to upload it to Azure's Indexer. <br>This process takes time</p>
+                <button id="loadAudioBtn" style="display: none;"><i class="fas fa-upload"></i> Load Audio</button>
 
-        <!-- Hidden Description and Button for Load Audio (shown only after login) -->
-        <p id="loadAudioDesc" style="display: none;">Choose an audio file to upload it to Azure's Indexer.</p>
-        <button id="loadAudioBtn" style="display: none;"><i class="fas fa-upload"></i> Load Audio</button>
+                <p id="loadFileListDesc" style="display: none;">Get transcript from a list of files.</p>
+                <button id="loadListBtn" style="display: none;">Get Transcript</button>
+            </div>
 
-        <!-- Hidden Description and Button for Get Transcript (shown only after login) -->
-        <p id="loadFileListDesc" style="display: none;">Get transcript from a list of files.</p>
-        <button id="loadListBtn" style="display: none;">Get Transcript</button>
+            <!-- Second Button Group: Text Operations -->
+            <div class="button-group">
+                <h2>Text Operations</h2>
+                <p>Load the enhancment model first</p>
+                <button id="loadModelBtn"><i class="fas fa-upload"></i> Load Model</button>
 
-        <!-- Description and Button for Load Text with Icon -->
-        <p>Choose a text file to load</p>
-        <button id="loadTextBtn"><i class="fas fa-upload"></i> Load Text</button>
+                <p>Choose a text file to load</p>
+                <button id="loadTextBtn"><i class="fas fa-upload"></i> Load Text</button>
 
-        <!-- Description and Button for Enhance/Transform -->
-        <p>Click the button below to run the program and enhance the uploaded content.</p>
-        <button id="transformBtn">Enhance</button>
+                <p>Click the button below to run the program and enhance the uploaded content.</p>
+                <button id="transformBtn">Enhance</button>
+            </div>
+        </div>
     </div>
 
     <!-- Existing backend.js -->
@@ -57,7 +64,6 @@
             });
         }
     </script>
-    
 </body>
 
 </html>

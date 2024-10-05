@@ -173,6 +173,20 @@ def authorized():
     #for local host
     return redirect(url_for('index', logged_in=True))
 
+
+@app.route('/load_model', methods=['POST'])
+# Ensure that the model is downloaded and loaded only when needed
+def load_model():
+    try:
+        # Call the function that loads the model and tokenizer
+        load_model_and_tokenizer()
+        return jsonify({'message': 'Model and tokenizer successfully loaded.'}), 200
+    except Exception as e:
+        # If there's an error during loading, catch it and return an error message
+        return jsonify({'message': f'Error loading model: {str(e)}'}), 500
+
+
+
 @app.route('/translate', methods=['POST'])
 def translate():
     # Ensure that the model is downloaded and loaded only when needed
