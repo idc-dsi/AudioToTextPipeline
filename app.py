@@ -7,6 +7,8 @@ from urllib.parse import unquote
 from werkzeug.middleware.proxy_fix import ProxyFix
 from static.py.video_indexer import VideoIndexer
 from dotenv import load_dotenv
+# import re
+# import string
 import os
 import sys
 import jwt
@@ -122,16 +124,40 @@ def download_model_files():
 tokenizer = None
 model = None
 
+
+
 def load_model_and_tokenizer():
     global tokenizer, model
     # Download model files if not already present
     download_model_files()
 
-    # Load the model and tokenizer if not already loaded
-    if tokenizer is None or model is None:
-        tokenizer = AutoTokenizer.from_pretrained(local_model_dir, local_files_only=True)
-        model = AutoModelForSeq2SeqLM.from_pretrained(local_model_dir, local_files_only=True)
-        print("Model and tokenizer loaded successfully.")
+    # Check if the model and tokenizer are already loaded and reinitialize if necessary
+    try:
+        # Load the model and tokenizer if not already loaded
+        if tokenizer is None or model is None:
+            tokenizer = AutoTokenizer.from_pretrained(local_model_dir, local_files_only=True)
+            model = AutoModelForSeq2SeqLM.from_pretrained(local_model_dir, local_files_only=True)
+            print("Model and tokenizer loaded successfully.")
+        else:
+            print("Model and tokenizer were already loaded.")
+    except Exception as e:
+        print(f"Error loading model or tokenizer: {e}")
+        # Log error and reset the tokenizer and model to retry loading if needed
+        tokenizer, model = None, None
+        raise
+
+
+
+# # if we want to remove punctuation from the text
+# def remove_punctuation(text):
+#     # Define language-specific and regular punctuation
+#     additional_punctuation = "،؛؟"
+#     all_punctuation = string.punctuation + additional_punctuation
+#     # Remove punctuation using regular expressions
+#     text = re.sub(f'[{re.escape(all_punctuation)}]', '', text)
+#     # Remove any extra spaces created by removing punctuation
+#     text = re.sub(r'\s+', ' ', text).strip()
+#     return text
 
 @app.route('/')
 def index():

@@ -10,6 +10,7 @@
 document.addEventListener("DOMContentLoaded", function () {
    // Variable to store the text content obtained from Azure Video Indexer or uploaded by the user
    var uploadedTextContent = "";
+   var isModelLoaded = false; // Track model load status
 
    // Functions to show and hide the spinner
    function showLoadingSpinner() {
@@ -20,6 +21,29 @@ document.addEventListener("DOMContentLoaded", function () {
    function hideLoadingSpinner() {
       document.getElementById('loadingSpinner').style.display = 'none';
    }
+
+   // Automatically load the model on page load, without showing the spinner
+   async function loadModelInBackground() {
+      try {
+         const response = await fetch('/load_model', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+         });
+
+         if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+         }
+
+         const data = await response.json();
+         console.log(data.message); // Log success message
+         isModelLoaded = true; // Set model load status to true
+      } catch (error) {
+         console.error('Error loading the model:', error);
+      }
+   }
+
+   // Call loadModelInBackground to load the model when the page loads
+   loadModelInBackground();
 
    // Check if the "Load Audio" button is present and set up its event handler
    var loadAudioBtn = document.getElementById('loadAudioBtn');
@@ -135,32 +159,6 @@ document.addEventListener("DOMContentLoaded", function () {
          });
    }
 
-   // Handle model loading
-   document.getElementById('loadModelBtn').addEventListener('click', async function () {
-      showLoadingSpinner();
-      alert("Loading model and tokenizer. Please wait...");
-      try {
-         // Send a POST request to the server to load the model and tokenizer
-         const response = await fetch('/load_model', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-         });
-
-         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-         }
-
-         hideLoadingSpinner();
-         const data = await response.json();
-         alert(data.message); // Inform the user that the model is successfully loaded
-      } catch (error) {
-         console.error('Error loading the model:', error);
-         alert(`Failed to load the model: ${error.message}`);
-      }
-   });
-
-
-
    // Handles text file uploads
    document.getElementById('loadTextBtn').addEventListener('click', function () {
       var input = document.createElement('input');
@@ -178,24 +176,31 @@ document.addEventListener("DOMContentLoaded", function () {
       input.click();  // Trigger the file selection dialog.
    });
 
-   // Handle transformation request
+   // Handle transformation request with a check for model load completion
    document.getElementById('transformBtn').addEventListener('click', function () {
       if (!uploadedTextContent) {
          console.log('No file uploaded.');
          alert("Please upload a file first");
-      } else {
-         alert("Transformation started. Please wait for the download to begin.")
-         transformText(uploadedTextContent);
-
+         return;
       }
+
+      showLoadingSpinner(); // Show spinner when enhancement starts
+
+      // Wait until model is loaded before proceeding with translation
+      const waitForModelAndTranslate = setInterval(() => {
+         if (isModelLoaded) {
+            clearInterval(waitForModelAndTranslate); // Stop checking
+            alert("Transformation started. Please wait for the download to begin.");
+            transformText(uploadedTextContent); // Proceed with translation
+         } else {
+            console.log("Model is not yet loaded, waiting...");
+         }
+      }, 500); // Check every 500ms if the model is loaded
    });
-
-
 
    // Send the text to the server for translation
    async function transformText(textContent) {
       console.log('Sending POST request with text content:', textContent);
-      showLoadingSpinner();
       try {
          const response = await fetch('/translate', {
             method: 'POST',
@@ -207,10 +212,11 @@ document.addEventListener("DOMContentLoaded", function () {
          }
          const data = await response.json();
          console.log('Received translated text:', data.translated_text);
-         hideLoadingSpinner()
          saveTextAsFile(data.translated_text, "translated_output");
       } catch (error) {
          console.error('Error during text translation:', error);
+      } finally {
+         hideLoadingSpinner(); // Hide spinner once translation is done
       }
    }
 
